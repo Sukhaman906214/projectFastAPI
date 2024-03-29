@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 
 app = FastAPI()
-app.get("/")
+@app.get("/", response_class=HTMLResponse)
+async def show_login_form(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
 
-async def show_login_form():
-    return "login form"
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 app.post("login")
