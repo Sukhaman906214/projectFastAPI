@@ -11,7 +11,17 @@ async def show_login_form(request: Request):
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-app.post("login")
+@app.post("/login/")
+async def login(
+    request: Request, email: EmailStr = Form(...), password: str = Form(...)
+):
+
+    # Establish a database session
+    with SessionLocal() as db:
+
+    return JSONResponse(content={"access_token": token, "token_type": "bearer"})
+
+
 
 
 async def login():
