@@ -34,5 +34,8 @@ async def login(
 async def login():
     return {"message":"login Successfully"}
 @app.post("/signup")
-asyn def signup():
+asyn def signup(email: str = Form(...),
+    password: str = Form(...),
+    full_name: str = Form(...),
+    pricing_tier: str = Form(...),):
     return {"message ":" Sign up Successfully"}
