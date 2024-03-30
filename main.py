@@ -15,3 +15,6 @@ app.post("login")
 
 async def login():
     return {"message":"login Successfully"}
+@app.post("/signup")
+asyn def signup():
+    return {"message ":" Sign up Successfully"}
