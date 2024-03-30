@@ -17,9 +17,16 @@ async def login(
 ):
 
     # Establish a database session
+    # Establish a database session
     with SessionLocal() as db:
+        # Query the database for the user
+        user = db.query(enrty).filter(enrty.email == email).first()
 
-    return JSONResponse(content={"access_token": token, "token_type": "bearer"})
+        # Check if user exists and password is correct
+        if not user or not verify_password(password, user.password):
+            raise HTTPException(status_code=401, detail="Incorrect email or password")
+
+    
 
 
 
