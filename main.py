@@ -25,12 +25,6 @@ async def login(
         # Check if user exists and password is correct
         if not user or not verify_password(password, user.password):
             raise HTTPException(status_code=401, detail="Incorrect email or password")
-
-    
-
-
-
-
 async def login():
     return {"message":"login Successfully"}
 @app.post("/signup")
@@ -39,3 +33,5 @@ asyn def signup(email: str = Form(...),
     full_name: str = Form(...),
     pricing_tier: str = Form(...),):
     return {"message ":" Sign up Successfully"}
+
+
