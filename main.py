@@ -1,6 +1,7 @@
 from fastapi import FastAPI,Form
 from model import enrty
 from fastapi.responses import HTMLResponse
+from mode import JobSubmission
 app = FastAPI()
 # Route to display the login form
 @app.get("/", response_class=HTMLResponse)
