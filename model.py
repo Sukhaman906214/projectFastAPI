@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from db import Base
 from sqlalchemy import func
-from sqlalchemy import func
+
 class enrty(Base):
     __tablename__ = "sinup"
 
