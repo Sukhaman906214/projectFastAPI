@@ -1,8 +1,8 @@
 from fastapi import FastAPI,Form
-from model import enrty
+
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
-from mode import JobSubmission
+from mode import JobSubmission,enrty
 app = FastAPI()
 # Route to display the login form
 @app.get("/", response_class=HTMLResponse)
