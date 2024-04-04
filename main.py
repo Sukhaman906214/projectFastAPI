@@ -1,5 +1,6 @@
 from fastapi import FastAPI,Form
 from model import enrty
+from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 from mode import JobSubmission
 app = FastAPI()
