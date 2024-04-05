@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Form
+from fastapi import FastAPI,Form, HTTPException
 
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
@@ -12,11 +12,16 @@ async def show_login_form(request: Request):
 #use to encrypt the pawd
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Verify password
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
 
 @app.post("/login/")
 async def login(
     request: Request, email: EmailStr = Form(...), password: str = Form(...)
 ):
+
 
     # Establish a database session
     # Establish a database session
@@ -34,6 +39,16 @@ asyn def signup(email: str = Form(...),
     password: str = Form(...),
     full_name: str = Form(...),
     pricing_tier: str = Form(...),):
+        
+    credits = PRICING_TIERS[pricing_tier]
+    hashed_password = pwd_context.hash(password)
+    new_user = enrty(
+        email=email, password=hashed_password, full_name=full_name, credits=credits
+    )
+    db = SessionLocal()
+    db.add(new_user)
+    db.commit()
+    db.close()
     return {"message ":" Sign up Successfully"}
 
 
