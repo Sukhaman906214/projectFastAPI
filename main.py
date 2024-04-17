@@ -51,4 +51,8 @@ asyn def signup(email: str = Form(...),
     db.close()
     return {"message ":" Sign up Successfully"}
 
+# Route to serve the index.html file from the root path
+@app.get("/client", response_class=HTMLResponse)
+async def get_index():
+    return FileResponse("D:/PYTHONAPI/project/templates/client.html")
 
