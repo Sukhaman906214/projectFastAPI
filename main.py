@@ -8,6 +8,24 @@ app = FastAPI()
 @app.get("/", response_class=HTMLResponse)
 async def show_login_form(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+#  Pydantic model to represent the response from the external AI service
+class AIResponse(BaseModel):
+    status_code: int
+    response_json: Dict[str, Any]
+
+
+
+PRICING_TIERS = {"basic": 100, "standard": 250, "premium": 500}
+templates = Jinja2Templates(directory="templates")
+Base.metadata.create_all(engine)
+SECRET_KEY = " donotworkingsodoitagain "
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
+app.mount(
+    "/static", StaticFiles(directory="D:/PYTHONAPI/project/templates"), name="static"
+)
+
+logging.basicConfig(filename='server.log', level=logging.DEBUG)
 
 #use to encrypt the pawd
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
