@@ -22,7 +22,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         width: 300px;
       }
-       h2 {
+      .form-container h2 {
         text-align: center;
         margin-bottom: 20px;
       }
@@ -38,7 +38,7 @@
         border-radius: 5px;
         box-sizing: border-box;
       }
-      .formcontainer select {
+      .form-container select {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
@@ -47,7 +47,7 @@
         box-sizing: border-box;
         cursor: pointer;
       }
-      .formcontainer {
+      .form-container input[type="submit"] {
         width: 100%;
         padding: 10px;
         background-color: #007bff;
@@ -62,7 +62,8 @@
       }
     </style>
   </head>
-    <body><div class="form-container">
+  <body>
+    <div class="form-container">
       <h2>Signup Form</h2>
       <form action="/signup/" method="post">
         <label for="email">Email:</label><br />
@@ -76,10 +77,10 @@
           <option value="basic">Basic(50$)</option>
           <option value="standard">Standard(100$)</option>
           <option value="premium">Premium(200$)</option></select><br /><br />
+          
         <input type="submit" value="Sign Up" />
         <a href="/"> Login In to APPI Application</a>
       </form>
     </div>
-    </body>
-  
+  </body>
 </html>
