@@ -1,1 +1,142 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login and Sign-up Forms</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-container label {
+      font-weight: bold;
+    }
+
+    .form-container .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .form-container .checkbox-container label {
+      margin-left: 5px;
+    }
+
+    .form-container input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .form-container input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    /* Styling for the pricing link */
+    .pricing-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .pricing-link button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .pricing-link button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Pricing</h2>
+    <p>Select the desired pricing tier:</p>
+    <form id="buy-credits-form" action="/buy_credits/" method="post">
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div class="checkbox-container">
+        <input type="checkbox" id="basic" name="pricing_tier" value="basic" />
+        <label for="basic">Basic ($50)</label>
+      </div>
+      <div class="checkbox-container">
+        <input type="checkbox" id="standard" name="pricing_tier" value="standard" />
+        <label for="standard">Standard ($100)</label>
+      </div>
+      <div class="checkbox-container">
+        <input type="checkbox" id="premium" name="pricing_tier" value="premium" />
+        <label for="premium">Premium ($200)</label>
+      </div>
+      <input type="submit" id="buy-credits-btn" value="Buy Credits" />
+    </form>
+    <div id="notification" class="hidden">
+      <span id="notification-message"></span>
+    </div>
+  </div>
+
+  <script>
+document.getElementById("buy-credits-form").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent form submission
+    const formData = new FormData(this);
+    const email = formData.get('email'); // Get the email from the form data
+
+    // Proceed with buying credits
+    const token = localStorage.getItem("access_token"); // Retrieve the access token from localStorage
+    const response = await fetch("/buy_credits/", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`, // Use the retrieved access token
+        },
+        body: formData,
+    });
+    const data = await response.json();
+    if (response.ok) {
+        // Show success message
+        const message = data.message + "\nNew Credits: " + data.new_credits;
+        alert(message);
+        // Redirect to client.html
+        window.location.href = '/client';
+    } else {
+        // Show error message
+        alert("Error: Unable to buy credits. Please try again later.");
+    }
+});
+</script>
+
+
+</body>
+</html>
