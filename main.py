@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, Form, HTTPException, Depends, Header
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -55,7 +54,7 @@ class AIResponse(BaseModel):
 
 
 # app = FastAPI()
-PRICING_TIERS = {"basic": 100, "standard": 250, "premium": 500}
+PRICING_TIERS = {"basic": 5, "standard": 250, "premium": 500}
 templates = Jinja2Templates(directory="templates")
 Base.metadata.create_all(engine)
 SECRET_KEY = " Khushab "
@@ -72,7 +71,9 @@ logging.basicConfig(filename='server.log', level=logging.DEBUG)
 async def get_index():
     return FileResponse("D:/PYTHONAPI/project/templates/client.html")
 
-
+@app.get("/pricing",response_class=HTMLResponse)
+async def get_pricing():
+    return FileResponse("D:/PYTHONAPI/project/templates/pricing.html")
 # Generate JWT token
 def create_access_token(email: str):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -134,8 +135,9 @@ async def signup(
     db.add(new_user)
     db.commit()
     db.close()
+    access_token = create_access_token(email)
     return {"message": "Sign up successfuly"}
-
+    return {"message": "Sign up successful", "access_token": access_token}
 
 def deduct_credits(user_id, amount_to_deduct):
     user = SessionLocal().query(enrty).get(user_id)
@@ -224,7 +226,7 @@ async def submit_job(
     # Check if user has sufficient credits
     if user.credits <= 0:
         db.close()
-        return JSONResponse(status_code=403,content={"message": "Insufficient credits. Please purchase credits to submit more jobs."},)
+        return JSONResponse(status_code=403,content={"message": "Insufficient credits.your job is in qeue."},)
 
     # Deduct credits
     user.credits -= 1
@@ -380,3 +382,37 @@ async def chat_with_ai(user_input: str = Query(...)):
         return response.json()
     except requests.RequestException as e:
         raise HTTPException(status_code=500, detail="Error communicating with the external AI service")
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
+# Modify the buy_credits function to use email_check
+@app.post("/buy_credits/")
+async def buy_credits(
+    email: str = Form(...),
+    pricing_tier: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    # Fetch the user from the database
+    user = db.query(enrty).filter(enrty.email == email).first()
+
+    # Update user's credits based on the selected pricing tier
+    if pricing_tier == "basic":
+        user.credits += 50
+    elif pricing_tier == "standard":
+        user.credits += 100
+    elif pricing_tier == "premium":
+        user.credits += 200
+
+    # Commit the changes to the database
+    db.commit()
+
+    # Return a success message
+    
+    return {"message": "Credits added successfully", "new_credits": user.credits}
