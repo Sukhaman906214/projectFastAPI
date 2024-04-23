@@ -89,12 +89,16 @@
       #paragraph {
         display: none;
       }
+      #buy_credits{
+        margin-top:10px;
+        border:1px;
+      }
     </style>
   </head>
   <body>
-    <h3 style="padding-left: 45%">Login For client</h3>
+    <h3 style="padding-left: 45%"></h3>
     <div id="login-form" class="form-container">
-      <h2>Login</h2>
+      <h2>Login For Client</h2>
       <input type="text" id="login-email" placeholder="Email" required />
       <input
         type="password"
@@ -130,12 +134,12 @@
       <textarea
         id="job-description"
         placeholder="Job Description"
-        col=2
-        row=7
+        col="2"
+        row="7"
         required
         name="description"
       ></textarea>
-      <button onclick="fetchDescription()">Generate Description</button>
+      <button onclick="fetchDescription()">Generate Description With AI</button>
       <!-- Changed button text -->
       <input
         type="text"
@@ -151,8 +155,12 @@
         <option value="low">Low</option>
       </select>
       <button onclick="submitJob()">Submit</button>
-    </div>
 
+      <a href="/" target="" >
+        <button id="buy_credits">Buy Credit</button>
+      </a>
+    </div>
+    
     <div id="job-results" class="hidden">
       <h2>Job Results</h2>
       <div id="result-container"></div>
@@ -163,17 +171,16 @@
       <a id="buy-credits-link" href="#" class="hidden">Buy Credits</a>
     </div>
 
-    <div style="text-align: center; margin-top: 20px">
-      <a href="/pdf" target="_blank">
-        <button>View PDFf File</button>
-      </a>
+    <!--<div style="text-align: center; margin-top: 20px">
+      
     </div>
-
+  -->
     <script>
       function showParagraph() {
         var paragraph = document.getElementById("paragraph");
         paragraph.style.display = "block";
       }
+      // Update the login function to store the access token and expiration time
       // Update the login function to store the access token and expiration time
       async function login() {
         const email = document.getElementById("login-email").value;
@@ -197,20 +204,25 @@
             body: formData,
           });
 
-          const data = await response.json();
-          const accessToken = data.access_token;
-          const tokenExpiration = new Date(data.token_expiration);
+          if (response.ok) {
+            const data = await response.json();
+            const accessToken = data.access_token;
+            const tokenExpiration = new Date(data.token_expiration);
 
-          // Store the access token and expiration time in local storage
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("tokenExpiration", tokenExpiration);
+            // Store the access token and expiration time in local storage
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("tokenExpiration", tokenExpiration);
 
-          // Hide the login form
-          document.getElementById("login-form").classList.add("hidden");
+            // Hide the login form
+            document.getElementById("login-form").classList.add("hidden");
 
-          // Show the job submission form
-          document.getElementById("job-form").classList.remove("hidden");
-          document.getElementById("job-results").classList.add("hidden");
+            // Show the job submission form
+            document.getElementById("job-form").classList.remove("hidden");
+            document.getElementById("job-results").classList.add("hidden");
+          } else {
+            // Show error notification for incorrect email or password
+            showNotification("Incorrect email or password", "error");
+          }
         } catch (error) {
           console.error("Error during login:", error);
         }
@@ -264,7 +276,7 @@
           } else if (response.status === 403) {
             // Show insufficient credits message
             const data = await response.json();
-            const message = `${data.message} <a href="/pricing.html">Click here to buy credits</a>`;
+            const message = `${data.message}  `;
 
             alert(message);
           } else {
@@ -323,37 +335,44 @@
         }
       }
       async function fetchDescription() {
+        const user_input = document.getElementById("job-title").value;
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append(
+          "Authorization",
+          "Bearer pg3AZXVOUbUJSObwCq5m7dIQ07u09xZc"
+        );
 
-const user_input = document.getElementById("job-title").value;
-const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-myHeaders.append("Authorization", "Bearer pg3AZXVOUbUJSObwCq5m7dIQ07u09xZc");
+        const raw = JSON.stringify({
+          numResults: 1,
+          temperature: 0.7,
+          messages: [
+            {
+              text: user_input,
+              role: "user",
+            },
+          ],
+          system:
+            "You are an AI assistant for business research. Your responses should be informative and concise.",
+        });
 
-const raw = JSON.stringify({
-  "numResults": 1,
-  "temperature": 0.7,
-  "messages": [
-    {
-      "text": user_input,
-      "role": "user"
-    }
-  ],
-  "system": "You are an AI assistant for business research. Your responses should be informative and concise."
-});
+        const requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
 
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow"
-};
-
-fetch("https://api.ai21.com/studio/v1/j2-ultra/chat", requestOptions)
-  .then((response) =>response.json())
-  .then((result) =>document.getElementById('job-description').innerHTML=result['outputs'][0]['text'])
-  .catch((error) => console.error(error));
+        fetch("https://api.ai21.com/studio/v1/j2-ultra/chat", requestOptions)
+          .then((response) => response.json())
+          .then(
+            (result) =>
+              (document.getElementById("job-description").innerHTML =
+                result["outputs"][0]["text"])
+          )
+          .catch((error) => console.error(error));
         return;
-        
+
         console.log("fetchDescription() called");
         const jobTitle = document.getElementById("job-title").value;
 
@@ -379,4 +398,3 @@ fetch("https://api.ai21.com/studio/v1/j2-ultra/chat", requestOptions)
     </script>
   </body>
 </html>
-
